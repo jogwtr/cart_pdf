@@ -36,6 +36,7 @@ class PdfDemand extends \TYPO3\CMS\Extbase\DomainObject\AbstractEntity
      */
     public function getDebug(): int
     {
+        // @extensionScannerIgnoreLine
         return $this->debug;
     }
 
@@ -45,6 +46,7 @@ class PdfDemand extends \TYPO3\CMS\Extbase\DomainObject\AbstractEntity
     public function setDebug(int $debug)
     {
         if ($debug) {
+            // @extensionScannerIgnoreLine
             $this->debug = $debug;
         }
     }

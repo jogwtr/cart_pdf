@@ -13,12 +13,14 @@ use Extcode\Cart\Domain\Model\Order\Item as OrderItem;
 use Extcode\Cart\Domain\Repository\Order\ItemRepository as OrderItemRepository;
 use Extcode\CartPdf\Domain\Model\Dto\PdfDemand;
 use Extcode\TCPDF\Service\TsTCPDF;
+use TYPO3\CMS\Core\Http\ApplicationType;
 use TYPO3\CMS\Core\Resource\File;
 use TYPO3\CMS\Core\Resource\ResourceFactory;
 use TYPO3\CMS\Core\Resource\StorageRepository;
 use TYPO3\CMS\Core\Utility\GeneralUtility;
 use TYPO3\CMS\Extbase\Configuration\ConfigurationManager;
 use TYPO3\CMS\Extbase\Domain\Model\FileReference;
+use Psr\Http\Message\ServerRequestInterface;
 use TYPO3\CMS\Extbase\Persistence\Generic\PersistenceManager;
 
 class PdfService
@@ -93,13 +95,14 @@ class PdfService
         OrderItemRepository $orderItemRepository,
         PersistenceManager $persistenceManager,
         ResourceFactory $resourceFactory,
-        StorageRepository $storageRepository
+        StorageRepository $storageRepository,
     ) {
         $this->configurationManager = $configurationManager;
         $this->orderItemRepository = $orderItemRepository;
         $this->resourceFactory = $resourceFactory;
         $this->persistenceManager = $persistenceManager;
         $this->storageRepository = $storageRepository;
+        $this->request = $GLOBALS['TYPO3_REQUEST'];
     }
 
     /**
@@ -118,7 +121,7 @@ class PdfService
         $newFileName = $orderItem->$getNumber() . '.pdf';
 
         if (file_exists($pdfFilename)) {
-            $storage = $this->storageRepository->findByUid($this->pdfSettings['storageRepository']);
+            $storage = $this->storageRepository->findByUid((int)$this->pdfSettings['storageRepository']);
             $targetFolder = $storage->getFolder($this->pdfSettings['storageFolder']);
 
             if (class_exists('\TYPO3\CMS\Core\Resource\DuplicationBehavior')) {
@@ -327,9 +330,8 @@ class PdfService
      */
     protected function setPluginSettings(string $pdfType)
     {
-        if (TYPO3_MODE === 'BE') {
-            $pageId = (int)(GeneralUtility::_GET('id')) ? GeneralUtility::_GET('id') : 1;
-
+        if (ApplicationType::fromRequest($this->request)->isBackend()) {
+            $pageId = (int)$this->request->getQueryParams()['id'] ? $this->request->getQueryParams()['id'] : 1;
             $frameworkConfiguration = $this->configurationManager->getConfiguration(
                 ConfigurationManager::CONFIGURATION_TYPE_FRAMEWORK
             );

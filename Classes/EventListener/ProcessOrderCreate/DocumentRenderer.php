@@ -11,8 +11,8 @@ namespace Extcode\CartPdf\EventListener\ProcessOrderCreate;
 
 use Extcode\Cart\Domain\Repository\Order\ItemRepository as OrderItemRepository;
 use Extcode\Cart\Event\ProcessOrderCreateEvent;
-use Extcode\Cart\Utility\OrderUtility;
 use Extcode\CartPdf\Service\PdfService;
+use TYPO3\CMS\Extbase\Mvc\RequestInterface;
 use TYPO3\CMS\Extbase\Persistence\Generic\PersistenceManager;
 
 class DocumentRenderer
@@ -26,11 +26,6 @@ class DocumentRenderer
      * @var OrderItemRepository
      */
     protected $orderItemRepository;
-
-    /**
-     * @var OrderUtility
-     */
-    protected $orderUtility;
 
     /**
      * @var PdfService
@@ -50,13 +45,11 @@ class DocumentRenderer
     public function __construct(
         PersistenceManager $persistenceManager,
         OrderItemRepository $orderItemRepository,
-        OrderUtility $orderUtility,
         PdfService $pdfService,
         array $options = []
     ) {
         $this->persistenceManager = $persistenceManager;
         $this->orderItemRepository = $orderItemRepository;
-        $this->orderUtility = $orderUtility;
         $this->pdfService = $pdfService;
         $this->options = $options;
     }
