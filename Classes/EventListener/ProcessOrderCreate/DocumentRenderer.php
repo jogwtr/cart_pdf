@@ -10,7 +10,7 @@ namespace Extcode\CartPdf\EventListener\ProcessOrderCreate;
  */
 
 use Extcode\Cart\Domain\Repository\Order\ItemRepository as OrderItemRepository;
-use Extcode\Cart\Event\ProcessOrderCreateEvent;
+use Extcode\Cart\Event\Order\NumberGeneratorEvent;
 use Extcode\CartPdf\Service\PdfService;
 use TYPO3\CMS\Extbase\Mvc\RequestInterface;
 use TYPO3\CMS\Extbase\Persistence\Generic\PersistenceManager;
@@ -54,7 +54,7 @@ class DocumentRenderer
         $this->options = $options;
     }
 
-    public function __invoke(ProcessOrderCreateEvent $event): void
+    public function __invoke(NumberGeneratorEvent $event): void
     {
         $orderItem = $event->getOrderItem();
         $this->settings = $event->getSettings();
